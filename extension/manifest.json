@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Caveman Injector",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": ["https://claude.ai/new", "https://claude.ai/new?*"],
+      "js": ["inject.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
