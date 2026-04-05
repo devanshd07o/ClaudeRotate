@@ -27,8 +27,9 @@ def load_accounts():
     with open(ACCOUNTS_FILE) as f:
         data = json.load(f)
     accounts = [a for a in data["accounts"] if a.get("active", True)]
-    # JSON path takes priority; fallback to auto-detect
-    chrome_exe = data.get("chrome_exe") or find_chrome()
+    # JSON path takes priority only if real path; fallback to auto-detect
+    _exe = data.get("chrome_exe", "")
+    chrome_exe = _exe if (_exe and _exe != "AUTO_DETECTED" and os.path.exists(_exe)) else find_chrome()
     return accounts, chrome_exe
 
 def get_current_index(total):

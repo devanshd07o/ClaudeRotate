@@ -172,17 +172,23 @@ Double-click **`create_shortcut.bat`**
 
 ---
 
-## ⚙️ Customize Your Auto-Prompt
+## 🧠 The Caveman Prompt — What It Does
 
-Open `extension/inject.js` and edit the `PROMPT` variable:
+ClaudeRotate ships with a built-in **token-optimized prompt** that auto-sends on every new Claude chat. It transforms Claude's behavior in 3 ways:
 
-```javascript
-const PROMPT =
-  "From now on, act as a token-optimized strict assistant.\n\n" +
-  // ← Change this text to whatever you want auto-sent
-```
+**1. Caveman Communication Mode**
+No filler words. No greetings. No apologies. No lengthy explanations.
+Claude responds in short, sharp keywords — like a senior dev who respects your time.
 
-Save → Go to `chrome://extensions` → Click 🔄 reload on Caveman Injector.
+**2. Surgical Code/Doc Editing**
+Claude never dumps the entire file back at you.
+It outputs ONLY the exact lines or blocks that changed — saving tokens, saving time.
+
+**3. Graph-Based Context Navigation**
+For large files, Claude first maps your code into a hierarchical tree structure, asks which node to expand, then jumps directly to that location — no re-scanning, no bloat.
+
+> The prompt logic is embedded in the extension. Source is obfuscated to protect the methodology.  
+> A customizable version is planned for a future release.
 
 ---
 
