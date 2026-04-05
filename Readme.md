@@ -108,23 +108,21 @@ Example: Extract to `C:\ClaudeRotate\`
 
 ### Step 3 — Run Setup
 
-1. Open the extracted folder
-2. Double-click **`setup_profiles.py`** OR open terminal here and run:
-   ```
-   python setup_profiles.py
-   ```
-3. It will scan your Chrome profiles and show them:
+Double-click **`setup.bat`**
+
+It will:
+1. Scan all your Chrome profiles and list them:
    ```
    [0] Person 1 → Default
    [1] Claude Acc 1 → Profile 1
    [2] Claude Acc 2 → Profile 2
    ```
-4. It will open each profile in Chrome — verify Claude is logged in
-5. Enter the numbers of profiles that have Claude logged in:
+2. Optionally open each profile so you can verify Claude is logged in
+3. Ask which profiles to include — enter numbers separated by commas:
    ```
    → 0,1,2,3,4
    ```
-6. Done! `claude_accounts.json` is saved automatically ✅
+4. Save `claude_accounts.json` automatically ✅
 
 ---
 
