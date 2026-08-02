@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Handover</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #090a0f;
+      --border:  rgba(255,255,255,0.07);
+      --primary: #7c3aed;
+      --text:    #f8fafc;
+      --muted:   #94a3b8;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html { width:320px; height:200px; overflow:hidden; transition: height 0.3s cubic-bezier(.4,0,.2,1); }
+    html.settings-open { height: 400px; }
+
+    body {
+      width: 320px;
+      height: 100%;
+      background: var(--bg);
+      background-image:
+        radial-gradient(at 0% 0%,   rgba(124,58,237,.18) 0, transparent 55%),
+        radial-gradient(at 100% 100%, rgba(59,130,246,.12) 0, transparent 55%);
+      color: var(--text);
+      font-family: 'Outfit', system-ui, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      background: rgba(15,17,26,.55);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      font-size: 15px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #c084fc, #6366f1, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .icon-btn {
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+    }
+    .icon-btn:hover {
+      background: rgba(255,255,255,.11);
+      color: var(--text);
+      transform: rotate(20deg) scale(1.08);
+    }
+
+    /* ── Body ── */
+    .main-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── Copy button ── */
+    #btn-copy {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 5px 20px rgba(124,58,237,.38);
+      transition: all .25s cubic-bezier(.4,0,.2,1);
+    }
+    #btn-copy:hover    { transform: translateY(-2px); box-shadow: 0 9px 26px rgba(124,58,237,.52); }
+    #btn-copy:active   { transform: translateY(1px);  box-shadow: none; }
+    #btn-copy.loading  { pointer-events: none; opacity: .75; }
+
+    .spinner {
+      display: none;
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Status ── */
+    #status {
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      text-align: center;
+      font-weight: 500;
+      color: var(--muted);
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.04);
+      transition: all .2s;
+    }
+    #status.success { color:#34d399; background:rgba(16,185,129,.09); border-color:rgba(16,185,129,.2); }
+    #status.error   { color:#f87171; background:rgba(239,68,68,.09);  border-color:rgba(239,68,68,.2); }
+    #status.info    { color:#60a5fa; background:rgba(59,130,246,.09); border-color:rgba(59,130,246,.2); }
+
+    /* ════════════════════════════════════════════
+       OVERLAY — slides up from bottom
+       ════════════════════════════════════════════ */
+    #settings-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 320px;
+      height: 100%;
+      background: #0b0c14;
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+      z-index: 9999;
+    }
+    #settings-overlay.open { transform: translateY(0); }
+
+    .ov-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .ov-title {
+      font-size: 13px;
+      font-weight: 600;
+      background: linear-gradient(135deg,#c084fc,#6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .ov-close { transform: none !important; }
+
+    .ov-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ov-body::-webkit-scrollbar { width: 3px; }
+    .ov-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 3px; }
+
+    .slabel {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tab {
+      padding: 4px 9px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 10.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .tab.active { background: rgba(124,58,237,.22); border-color: rgba(124,58,237,.5); color: #c084fc; }
+
+    .key-row { display: flex; gap: 5px; align-items: center; margin-top: 4px; }
+    .key-input {
+      flex: 1;
+      padding: 7px 9px;
+      background: rgba(15,17,26,.8);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-size: 11px;
+      font-family: monospace;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .key-input:focus { border-color: var(--primary); }
+
+    .row-btn {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .row-btn:hover { background: rgba(255,255,255,.1); color: var(--text); }
+    .row-btn.del:hover { background: rgba(239,68,68,.15); color: #f87171; }
+
+    .add-btn {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      border: 1px dashed rgba(255,255,255,.1);
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 10.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .model-select {
+      width: 100%;
+      padding: 7px 24px 7px 9px;
+      background: rgba(15,17,26,.8);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+    .model-select option { background: #12141d; }
+
+    /* Switch toggle */
+    .switch-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 34px;
+      height: 18px;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: rgba(255,255,255,.15);
+      transition: .2s;
+      border-radius: 18px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: var(--primary); }
+    input:checked + .slider:before { transform: translateX(16px); }
+
+    #btn-save {
+      width: 100%;
+      padding: 10px;
+      border-radius: 9px;
+      border: none;
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+    }
+
+    .save-note { font-size: 10.5px; text-align: center; color: #34d399; min-height: 14px; }
+    hr.divider { border: none; border-top: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Main View ─────────────────────────────────── -->
+  <header>
+    <h1>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="url(#grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient></defs>
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+      Claude Switcher
+    </h1>
+    <button id="btn-open-settings" class="icon-btn" title="Settings">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </header>
+
+  <div class="main-body">
+    <button id="btn-copy">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+      <span id="btn-text">Copy Handover Context</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+
+    <div id="status">Ready to extract context</div>
+  </div>
+
+  <!-- Settings Overlay -->
+  <div id="settings-overlay">
+    <div class="ov-header">
+      <span class="ov-title">⚙️ Settings & Keys</span>
+      <button id="btn-close-settings" class="icon-btn ov-close" title="Close">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="ov-body">
+
+      <!-- Floating Button Toggle -->
+      <div class="switch-row">
+        <span class="slabel" style="margin:0;">In-Page Floating Button</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-floating-widget" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Provider -->
+      <div>
+        <div class="slabel">Active Provider</div>
+        <div class="tabs" id="provider-tabs">
+          <button class="tab" data-p="groq">Groq</button>
+          <button class="tab" data-p="cerebras">Cerebras</button>
+          <button class="tab" data-p="gemini">Gemini</button>
+          <button class="tab" data-p="mistral">Mistral</button>
+          <button class="tab" data-p="openrouter">OpenRouter</button>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Keys -->
+      <div>
+        <div class="slabel" id="keys-label">API Keys</div>
+        <div id="keys-container"></div>
+        <button class="add-btn" id="btn-add-key">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add key
+        </button>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Model -->
+      <div>
+        <div class="slabel">Model</div>
+        <select class="model-select" id="model-select"></select>
+      </div>
+
+      <hr class="divider">
+
+      <button id="btn-save">Save Settings</button>
+      <div class="save-note" id="save-note"></div>
+
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

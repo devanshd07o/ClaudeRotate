@@ -1,0 +1,10 @@
+{
+  "api_keys": {
+    "groq": [],
+    "cerebras": [],
+    "gemini": [],
+    "mistral": [],
+    "openrouter": []
+  },
+  "default_provider": "groq"
+}

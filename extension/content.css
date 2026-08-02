@@ -1,0 +1,68 @@
+/* ═══════════════════════════════════════════════════════════════
+   content.css  —  Styling for 1-Click Floating FAB Widget & Toast
+   ═══════════════════════════════════════════════════════════════ */
+
+#csh-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999999;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  padding: 10px 18px;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.45);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+#csh-fab:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.6);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+#csh-fab:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+#csh-fab.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+#csh-fab.loading svg {
+  animation: csh-spin 0.8s linear infinite;
+}
+
+@keyframes csh-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Toast Badge attached to FAB button */
+#csh-toast {
+  display: none;
+}
+
+.csh-toast-show {
+  display: inline-block !important;
+  font-size: 12px;
+  font-weight: 700;
+  color: #34d399;
+  animation: csh-fade-in 0.2s ease-out;
+}
+.csh-toast-show.error {
+  color: #f87171;
+}
+
+@keyframes csh-fade-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}

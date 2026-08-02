@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Claude Handover — Setup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #0f0f1a; color: #e0e0f0;
+    min-height: 100vh; display: flex;
+    align-items: center; justify-content: center;
+  }
+  .card {
+    background: #1a1a2e; border: 1px solid #2d2d4e;
+    border-radius: 16px; padding: 32px; width: 480px;
+  }
+  h1 { font-size: 20px; color: #a78bfa; margin-bottom: 6px; }
+  .sub { color: #6b7280; font-size: 13px; margin-bottom: 28px; }
+  label { display: block; font-size: 13px; color: #9ca3af; margin-bottom: 6px; }
+  input {
+    width: 100%; padding: 10px 14px;
+    background: #0f0f1a; border: 1px solid #374151;
+    border-radius: 8px; color: #e0e0f0; font-size: 13px;
+    font-family: monospace; margin-bottom: 14px;
+    outline: none; transition: border 0.2s;
+  }
+  input:focus { border-color: #7c3aed; }
+  .hint { font-size: 11px; color: #4b5563; margin-top: -10px; margin-bottom: 14px; }
+  button {
+    width: 100%; padding: 12px; border-radius: 10px; border: none;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: white; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s;
+  }
+  button:hover { opacity: 0.9; }
+  #msg { margin-top: 14px; font-size: 13px; text-align: center;
+         color: #22c55e; min-height: 20px; }
+  #msg.err { color: #ef4444; }
+  .how { margin-top: 24px; padding-top: 20px; border-top: 1px solid #2d2d4e; }
+  .how h2 { font-size: 13px; color: #6b7280; margin-bottom: 10px; }
+  .how ol { padding-left: 18px; color: #6b7280; font-size: 12px; line-height: 2; }
+  .how code {
+    background: #0f0f1a; padding: 2px 6px; border-radius: 4px;
+    color: #a78bfa; font-size: 11px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>⚡ Claude Handover Setup</h1>
+  <p class="sub">One-time setup. Keys saved locally in browser only.</p>
+
+  <label>Groq API Key 1</label>
+  <input type="password" id="key1" placeholder="gsk_..."/>
+
+  <label>Groq API Key 2 (optional — for rotation)</label>
+  <input type="password" id="key2" placeholder="gsk_... (optional)"/>
+  <p class="hint">Get free keys at console.groq.com</p>
+
+  <button id="save">Save Keys</button>
+  <div id="msg"></div>
+
+  <div class="how">
+    <h2>HOW IT WORKS</h2>
+    <ol>
+      <li>Click your <code>Claude Switcher</code> desktop shortcut</li>
+      <li>Extension auto-detects previous Claude tab</li>
+      <li>Extracts chat → Groq summarizes → Clipboard ready</li>
+      <li>New account opens → press <code>Ctrl+V</code> to paste</li>
+    </ol>
+  </div>
+</div>
+<script src="options.js"></script>
+</body>
+</html>

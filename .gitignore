@@ -1,0 +1,15 @@
+# Personal configuration and keys
+internal/accounts_config.json
+extension/config.json
+internal/switcher_state.json
+
+# Logs and outputs
+internal/*_log.txt
+internal/last_summary.txt
+*.tmp
+
+# Python artifacts
+__pycache__/
+internal/__pycache__/
+*.py[cod]
+.history/
