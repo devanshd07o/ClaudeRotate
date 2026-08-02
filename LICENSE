@@ -1,0 +1,30 @@
+Copyright (c) 2026 Devansh (https://github.com/devanshd07o). All Rights Reserved.
+
+====================================================================
+           CLAUDEROTATE PROPRIETARY LICENSE & PRIVACY POLICY
+====================================================================
+
+1. INTELLECTUAL PROPERTY & OWNERSHIP:
+   All rights, title, and interest in and to the ClaudeRotate software,
+   including its source code, algorithms, visual design, and documentation,
+   are and shall remain the exclusive intellectual property of Devansh (@devanshd07o).
+
+2. RESTRICTIONS ON USE & RE-DISTRIBUTION:
+   - Personal & Open-Source Viewing: You may download, view, and use this
+     extension for personal productivity and session handover purposes.
+   - NO Re-branding: You are STRICTLY PROHIBITED from claiming ownership of this
+     codebase, removing copyright notices, or re-publishing this extension under
+     another name, organization, or Chrome Web Store account.
+   - NO Commercial Resale: Selling, licensing, or commercializing this codebase
+     or derived works without express written consent from the author is prohibited.
+
+3. PRIVACY & DATA SECURITY POLICY:
+   - 100% Local Execution: ClaudeRotate processes all handover summaries directly
+     within your browser environment and your configured LLM API endpoints.
+   - NO Telemetry / Data Collection: This extension DOES NOT collect, store, or
+     transmit any user data, chat history, prompt content, or API keys to any
+     external tracking server or remote database.
+   - Secure Local Storage: API keys are stored exclusively in Chrome local storage
+     (`chrome.storage.local`) on your machine and are never exposed to web pages.
+
+For permissions or inquiries, contact: https://github.com/devanshd07o

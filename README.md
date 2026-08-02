@@ -41,6 +41,13 @@
 
 ---
 
+## 🔒 Privacy Policy & Ownership Protection
+
+- **100% Local & Confidential**: ClaudeRotate processes all AI handover context locally on your device and communicates directly with official LLM providers (Groq/Gemini). NO user data, chat transcripts, or API keys are ever collected or sent to any third-party server.
+- **Intellectual Property**: Copyright (c) 2026 Devansh ([@devanshd07o](https://github.com/devanshd07o)). All rights reserved. Re-branding, re-publishing, or claiming ownership of this codebase without explicit written consent is strictly prohibited under the [LICENSE](LICENSE).
+
+---
+
 ## 📂 Repository Structure
 
 ```
@@ -57,6 +64,7 @@ ClaudeRotate/
 │   ├── config.example.json  # Public configuration template
 │   └── icon16.png           # Extension icons
 ├── .gitignore               # Excludes config.json and local logs
+├── LICENSE                  # Copyright & Privacy Policy agreement
 └── README.md                # Documentation & usage guide
 ```
 
@@ -64,4 +72,4 @@ ClaudeRotate/
 
 ## 🛡️ License
 
-MIT License. Free for open-source & personal developer handovers!
+Copyright © 2026 Devansh (devanshd07o). All Rights Reserved. See [LICENSE](LICENSE) for full details.
