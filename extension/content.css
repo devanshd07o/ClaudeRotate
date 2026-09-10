@@ -15,23 +15,27 @@
   font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   font-size: 13px;
   font-weight: 600;
-  cursor: pointer;
+  cursor: grab;
+  touch-action: none;
   display: flex;
   align-items: center;
   gap: 8px;
   box-shadow: 0 6px 24px rgba(124, 58, 237, 0.45);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
   user-select: none;
 }
 
 #csh-fab:hover {
-  transform: translateY(-3px) scale(1.03);
+  transform: translateY(-2px) scale(1.02);
   box-shadow: 0 10px 30px rgba(124, 58, 237, 0.6);
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-#csh-fab:active {
-  transform: translateY(1px) scale(0.98);
+#csh-fab:active,
+#csh-fab.csh-dragging {
+  cursor: grabbing !important;
+  transition: none !important;
+  transform: scale(0.98);
 }
 
 #csh-fab.loading {

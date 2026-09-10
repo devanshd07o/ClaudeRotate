@@ -121,6 +121,99 @@
 
   loadState();
 
+  // Draggable FAB Implementation with position persistence
+  let isDragging = false;
+  let hasDragged = false;
+  let startX = 0;
+  let startY = 0;
+  let initialLeft = 0;
+  let initialTop = 0;
+
+  try {
+    const savedPos = localStorage.getItem('csh_fab_position');
+    if (savedPos) {
+      const pos = JSON.parse(savedPos);
+      if (typeof pos.left === 'number' && typeof pos.top === 'number') {
+        const maxL = Math.max(10, window.innerWidth - 160);
+        const maxT = Math.max(10, window.innerHeight - 60);
+        const clampedL = Math.min(Math.max(10, pos.left), maxL);
+        const clampedT = Math.min(Math.max(10, pos.top), maxT);
+        fab.style.left = clampedL + 'px';
+        fab.style.top = clampedT + 'px';
+        fab.style.right = 'auto';
+        fab.style.bottom = 'auto';
+      }
+    }
+  } catch (_) {}
+
+  function onPointerDown(e) {
+    if (e.button !== 0 && e.type !== 'touchstart') return;
+    isDragging = false;
+    hasDragged = false;
+
+    const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+    startX = clientX;
+    startY = clientY;
+
+    const rect = fab.getBoundingClientRect();
+    initialLeft = rect.left;
+    initialTop = rect.top;
+
+    window.addEventListener('mousemove', onPointerMove, { passive: false });
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('touchmove', onPointerMove, { passive: false });
+    window.addEventListener('touchend', onPointerUp);
+  }
+
+  function onPointerMove(e) {
+    const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+
+    if (!isDragging && Math.hypot(dx, dy) > 5) {
+      isDragging = true;
+      hasDragged = true;
+      fab.classList.add('csh-dragging');
+    }
+
+    if (isDragging) {
+      if (e.cancelable) e.preventDefault();
+      const maxLeft = window.innerWidth - fab.offsetWidth - 10;
+      const maxTop = window.innerHeight - fab.offsetHeight - 10;
+
+      const newLeft = Math.min(Math.max(10, initialLeft + dx), maxLeft);
+      const newTop = Math.min(Math.max(10, initialTop + dy), maxTop);
+
+      fab.style.left = newLeft + 'px';
+      fab.style.top = newTop + 'px';
+      fab.style.right = 'auto';
+      fab.style.bottom = 'auto';
+    }
+  }
+
+  function onPointerUp() {
+    window.removeEventListener('mousemove', onPointerMove);
+    window.removeEventListener('mouseup', onPointerUp);
+    window.removeEventListener('touchmove', onPointerMove);
+    window.removeEventListener('touchend', onPointerUp);
+
+    if (isDragging) {
+      fab.classList.remove('csh-dragging');
+      try {
+        const rect = fab.getBoundingClientRect();
+        localStorage.setItem('csh_fab_position', JSON.stringify({ left: rect.left, top: rect.top }));
+      } catch (_) {}
+    }
+    isDragging = false;
+  }
+
+  fab.addEventListener('mousedown', onPointerDown);
+  fab.addEventListener('touchstart', onPointerDown, { passive: true });
+
   // Storage change listener
   try {
     if (typeof chrome !== 'undefined' && chrome?.storage?.onChanged) {
@@ -294,6 +387,10 @@
   // 1-Click Floating FAB Click Event
   fab.addEventListener('click', async (e) => {
     e.stopPropagation();
+    if (hasDragged) {
+      hasDragged = false;
+      return;
+    }
     fab.classList.add('loading');
 
     try {

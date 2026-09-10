@@ -1,1 +1,7 @@
-CreateObject("WScript.Shell").Run Chr(34) & CreateObject("Scripting.FileSystemObject").BuildPath(CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScript.ScriptFullName), "run_switcher.bat") & Chr(34), 0, False
+Set shell = CreateObject("WScript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+currentDir = fso.GetParentFolderName(WScript.ScriptFullName)
+batPath = fso.BuildPath(currentDir, "run_switcher.bat")
+
+shell.Run "cmd.exe /c """ & batPath & """", 0, False

@@ -1,10 +1,10 @@
 // background.js — Direct 2-Stage Parallel Dual-API Pipeline (Fast 7s Timeout Engine)
 
 const PROVIDER_MODELS = {
-  groq:       ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
-  cerebras:   ["llama-3.3-70b", "llama3.1-8b"],
+  groq:       ["qwen/qwen3.8-27b", "groq/compound-mini", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
+  cerebras:   ["llama-3.3-70b", "llama3.1-70b", "llama3.1-8b"],
   mistral:    ["mistral-large-latest", "mistral-small-latest"],
-  gemini:     ["gemini-2.5-flash", "gemini-1.5-flash"],
+  gemini:     ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash"],
   openrouter: ["meta-llama/llama-3.3-70b-instruct", "google/gemma-2-9b-it:free"]
 };
 
