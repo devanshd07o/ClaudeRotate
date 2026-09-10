@@ -59,7 +59,7 @@ Welcome! **ClaudeRotate** helps you manage multiple Claude.ai accounts and trans
 
 1. Open **https://claude.ai** in Chrome and open any chat thread.
 2. Look at the **bottom-right corner** of your webpage screen.
-3. You will see a purple floating button that says **Copy Handover**.
+3. You will see a purple floating button that says **Copy Handover** (👉 *Tip: You can click and drag this button anywhere on your screen!*).
 4. Click **Copy Handover**!
 5. Open your new chat session tab.
 6. Click inside the chat prompt box and press **Ctrl + V** on your keyboard (Paste).
