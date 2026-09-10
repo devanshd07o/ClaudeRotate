@@ -53,8 +53,16 @@ async function seedConfig() {
     const hasAnyKey = stored.api_keys && Object.values(stored.api_keys).some(arr => Array.isArray(arr) && arr.length > 0);
     
     if (!stored.config_seeded && !hasAnyKey) {
-      const res = await fetch(chrome.runtime.getURL("config.json"));
-      const cfg = await res.json();
+      let cfg = { api_keys: {}, default_provider: "groq" };
+      try {
+        const res = await fetch(chrome.runtime.getURL("config.json"));
+        if (res.ok) cfg = await res.json();
+      } catch (_) {
+        try {
+          const resEx = await fetch(chrome.runtime.getURL("config.example.json"));
+          if (resEx.ok) cfg = await resEx.json();
+        } catch (__) {}
+      }
       
       let apiKeys = cfg.api_keys || {};
       if ((!apiKeys.groq || apiKeys.groq.length === 0) && (cfg.groq_api_keys || cfg.groq_api_key)) {
@@ -66,12 +74,11 @@ async function seedConfig() {
         default_provider: cfg.default_provider || "groq",
         config_seeded: true
       });
-      console.log("Seeded config.json into chrome.storage.local");
     } else if (!stored.config_seeded && hasAnyKey) {
       await chrome.storage.local.set({ config_seeded: true });
     }
-  } catch (e) {
-    console.error("Failed to seed config:", e);
+  } catch (_) {
+    // Graceful fallback when no config is packaged
   }
 }
 
