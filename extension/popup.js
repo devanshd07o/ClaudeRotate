@@ -2,11 +2,31 @@
 //  CONSTANTS
 // ══════════════════════════════════════════════════════════════════
 const PROVIDER_MODELS = {
-  groq:       ["qwen/qwen3.8-27b", "groq/compound-mini", "llama-3.3-70b-versatile", "llama-3.1-8b-instant", "qwen/qwen3.6-27b"],
-  cerebras:   ["llama-3.3-70b", "llama3.1-70b", "llama3.1-8b"],
-  mistral:    ["mistral-large-latest", "mistral-small-latest", "codestral-latest"],
-  gemini:     ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.5-flash"],
-  openrouter: ["meta-llama/llama-3.3-70b-instruct", "google/gemma-2-9b-it:free", "meta-llama/llama-3-8b-instruct:free"]
+  groq: [
+    "openai/gpt-oss-20b",
+    "openai/gpt-oss-120b",
+    "llama-3.1-8b-instant"
+  ],
+  cerebras: [
+    "gpt-oss-120b",
+    "qwen-3.8-27b"
+  ],
+  mistral: [
+    "mistral-small-latest",
+    "mistral-small-2603",
+    "mistral-large-latest"
+  ],
+  gemini: [
+    "gemini-3.5-flash-lite",
+    "gemini-3.8-flash",
+    "gemini-3.1-flash-lite"
+  ],
+  openrouter: [
+    "nvidia/nemotron-3.5-lightning:free",
+    "nvidia/nemotron-3-super-120b-a12b:free",
+    "qwen/qwen3.8-27b:free",
+    "openrouter/free"
+  ]
 };
 
 const PROVIDER_URLS = {
